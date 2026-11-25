@@ -1,0 +1,5 @@
+<RCC><qresource prefix="/toolkit">
+  <file alias="Button.qml">components/Button.qml</file>
+  <file alias="DocumentList.qml">components/DocumentList.qml</file>
+  <file alias="DragSurface.qml">components/DragSurface.qml</file>
+</qresource></RCC>

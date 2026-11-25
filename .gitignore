@@ -1,0 +1,21 @@
+.DS_Store
+build/
+dist/
+__pycache__/
+.gradle/
+.kotlin/
+.idea/
+*.iml
+.qmlls.ini
+
+# Vendor libraries copied from the device or SDK
+*.so
+*.so.*
+vendor-libs/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
