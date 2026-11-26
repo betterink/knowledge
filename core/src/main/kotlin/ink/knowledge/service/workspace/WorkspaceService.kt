@@ -23,7 +23,7 @@ class WorkspaceService(
     fun load(): Workspace {
         val entries = fileService.walk()
         val filePaths = entries.filterNot { it.directory }.map { it.path }
-        val resolver = LinkResolver(filePaths)
+        val resolver = LinkResolverService(filePaths)
         val files = filePaths.map { buildFileNode(it, resolver) }
         val name = fileService.rootName()
         return Workspace(name = name, root = buildFolder(path = "", name = name, parent = null, entries, files))
@@ -33,7 +33,7 @@ class WorkspaceService(
 
     private fun buildFileNode(
         path: String,
-        resolver: LinkResolver,
+        resolver: LinkResolverService,
     ): Node {
         val fileName = path.substringAfterLast('/')
         val name = FileFormat.stripSuffix(fileName)
@@ -82,7 +82,7 @@ class WorkspaceService(
     private fun links(
         path: String,
         text: String,
-        resolver: LinkResolver,
+        resolver: LinkResolverService,
     ): List<Link> =
         WikiLinkParser.parse(path, text).map { parsed ->
             parsed.link.copy(target = resolver.resolve(path, parsed.linkpath))

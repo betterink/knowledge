@@ -6,7 +6,7 @@ import kotlin.test.assertNull
 
 class LinkResolverTest {
     private val resolver =
-        LinkResolver(
+        LinkResolverService(
             listOf(
                 "Home.md",
                 "Notes.base",

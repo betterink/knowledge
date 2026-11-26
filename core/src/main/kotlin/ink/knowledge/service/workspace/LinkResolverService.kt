@@ -4,7 +4,7 @@ package ink.knowledge.service.workspace
  * Resolves a linkpath to a vault path.
  * Ties: exact path, then the source's folder, then the shortest path.
  */
-class LinkResolver(
+class LinkResolverService(
     paths: Collection<String>,
 ) {
     private val candidates = paths.map { it to keys(it) }
