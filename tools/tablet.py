@@ -14,7 +14,7 @@ import tempfile
 
 from common import ROOT, SSH_OPTIONS, check_host, check_elf, elf_dependencies, run
 
-TABLET = ROOT / 'tablet'
+TABLET = ROOT / 'client/tablet'
 DEPLOY = TABLET / 'deploy'
 DIST = ROOT / 'dist'
 NAME = 'rm-knowledge'
