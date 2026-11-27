@@ -13,14 +13,17 @@ if test "$pen_input" = evdevtablet; then
         exit 1
     fi
 fi
-app=/home/root/rm-knowledge/current/rm-knowledge
+# Installed as /home/root/<name>/current/run-on-tablet.sh beside the <name> executable.
+current=$(cd "$(dirname "$0")" && pwd)
+name=$(basename "$(dirname "$current")")
+app=$current/$name
 test -x "$app" || { echo 'Deploy the tablet binary first.' >&2; exit 1; }
 "$app" --probe
 systemctl is-active --quiet xochitl || {
-    echo 'Xochitl must be running before starting rm-knowledge.' >&2; exit 1;
+    echo "Xochitl must be running before starting $name." >&2; exit 1;
 }
-if systemctl is-active --quiet rm-knowledge.service; then
-    echo 'rm-knowledge is already running.' >&2; exit 1
+if systemctl is-active --quiet "$name.service"; then
+    echo "$name is already running." >&2; exit 1
 fi
 # Refuse display takeover if the required platform/scenegraph plugins are absent.
 platform_plugin=$(find /usr/lib -path '*/platforms/*epaper*.so' -print -quit)
@@ -30,7 +33,7 @@ if test -z "$platform_plugin" || test -z "$scenegraph_plugin"; then
     exit 1
 fi
 systemctl_path=$(command -v systemctl)
-systemctl reset-failed rm-knowledge.service 2>/dev/null || true
+systemctl reset-failed "$name.service" 2>/dev/null || true
 set --
 if test -n "${RM_KNOWLEDGE_SERVER:-}"; then
     set -- --setenv=RM_KNOWLEDGE_SERVER="$RM_KNOWLEDGE_SERVER"
@@ -38,7 +41,7 @@ fi
 if test "$pen_input" = evdevtablet; then
     set -- "$@" --setenv=QT_QPA_GENERIC_PLUGINS=evdevtablet --setenv=QT_LOGGING_RULES=qt.qpa.input=true
 fi
-systemd-run --collect --unit=rm-knowledge \
+systemd-run --collect --unit="$name" \
     --property=Type=exec \
     --property="ExecStartPre=$systemctl_path stop xochitl" \
     --property="ExecStopPost=$systemctl_path start xochitl" \
@@ -53,5 +56,5 @@ systemd-run --collect --unit=rm-knowledge \
     --setenv=HOME=/home/root \
     "$@" \
     "$app" --fullscreen -platform epaper
-echo 'rm-knowledge started. Exit on-screen, or: systemctl stop rm-knowledge.service'
-echo 'Automatic exit after 10 minutes. Logs: journalctl -u rm-knowledge.service'
+echo "$name started. Exit on-screen, or: systemctl stop $name.service"
+echo "Automatic exit after 10 minutes. Logs: journalctl -u $name.service"

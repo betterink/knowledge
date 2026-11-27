@@ -43,5 +43,7 @@ esac
 cmake -S "$repo_dir/client/tablet" -B "$repo_dir/build/tablet-device" \
     -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$toolchain_file" -DRM_KNOWLEDGE_BUILD_TESTS=OFF
 cmake --build "$repo_dir/build/tablet-device" --parallel 2
-python3 "$repo_dir/tools/tablet.py" package \
+python3 "$repo_dir/tools/tablet.py" package --app rm-knowledge \
     --binary "$repo_dir/build/tablet-device/app/rm-knowledge"
+python3 "$repo_dir/tools/tablet.py" package --app interaction-benchmark \
+    --binary "$repo_dir/build/tablet-device/toolkit/examples/interaction-benchmark/interaction-benchmark"
