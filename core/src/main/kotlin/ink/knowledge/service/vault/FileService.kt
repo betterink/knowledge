@@ -5,11 +5,13 @@ import ink.knowledge.enums.vault.FileFormat
 import ink.knowledge.exceptions.NotFoundException
 import ink.knowledge.models.vault.VaultEntry
 import ink.knowledge.models.vault.Version
+import java.io.OutputStream
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
+import java.security.DigestInputStream
 import java.security.MessageDigest
 
 /**
@@ -57,10 +59,11 @@ class FileService(
 
     fun version(path: String): Version {
         val file = existingFile(path)
-        val bytes = Files.readAllBytes(file)
+        val digest = MessageDigest.getInstance("SHA-256")
+        DigestInputStream(Files.newInputStream(file), digest).use { it.transferTo(OutputStream.nullOutputStream()) }
         return Version(
-            hash = sha256(bytes),
-            size = bytes.size.toLong(),
+            hash = digest.digest().toHexString(),
+            size = Files.size(file),
             modified = Files.getLastModifiedTime(file).toMillis(),
         )
     }
@@ -91,6 +94,4 @@ class FileService(
     private fun isAllowed(fileName: String): Boolean = fileName !in properties.excluded && FileFormat.of(fileName) != FileFormat.UNKNOWN
 
     private fun relativize(path: Path): String = root.relativize(path).joinToString("/")
-
-    private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).toHexString()
 }
