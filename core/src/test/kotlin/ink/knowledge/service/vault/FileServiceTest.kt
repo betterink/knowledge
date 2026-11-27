@@ -2,6 +2,7 @@ package ink.knowledge.service.vault
 
 import ink.knowledge.exceptions.NotFoundException
 import ink.knowledge.util.factory.VaultFactory
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -39,5 +40,17 @@ class FileServiceTest {
         val version = service.version("A/Same.md")
         assertEquals("ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb", version.hash)
         assertEquals(1, version.size)
+    }
+
+    @Test
+    fun rejectsSymlinksOutsideVault() {
+        val root = VaultFactory.create()
+        val outside = Files.createTempDirectory("outside")
+        Files.writeString(outside.resolve("secret.md"), "secret")
+        Files.createSymbolicLink(root.resolve("Leak.md"), outside.resolve("secret.md"))
+        Files.createSymbolicLink(root.resolve("Linked"), outside)
+        val service = FileService(VaultFactory.properties(root))
+        assertFailsWith<IllegalArgumentException> { service.read("Leak.md") }
+        assertFailsWith<IllegalArgumentException> { service.read("Linked/secret.md") }
     }
 }

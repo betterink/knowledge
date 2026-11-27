@@ -77,6 +77,10 @@ class FileService(
         if (!Files.isRegularFile(file) || !isAllowed(file.fileName.toString())) {
             throw NotFoundException("File not found: $path")
         }
+        val realRoot = root.toRealPath()
+        val real = file.toRealPath()
+        require(real.startsWith(realRoot)) { "Path escapes the vault: $path" }
+        require(realRoot.relativize(real).none { it.toString() in properties.excluded }) { "Path is excluded: $path" }
         return file
     }
 
