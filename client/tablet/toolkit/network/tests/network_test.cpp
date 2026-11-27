@@ -25,7 +25,10 @@ static void serve(QTcpServer &server) {
 static HttpResponse fetch(HttpClient &client, const QString &path) {
     QEventLoop loop;
     HttpResponse result;
-    client.get(path, &loop, [&](const HttpResponse &response) { result = response; loop.quit(); });
+    client.get(path, &loop, [&](const HttpResponse &response) {
+        result = response;
+        loop.quit();
+    });
     loop.exec();
     return result;
 }
@@ -39,7 +42,10 @@ int main(int argc, char **argv) {
     HttpClient client(base, 300);
 
     const HttpResponse ok = fetch(client, "ok");
-    if (!ok.ok() || ok.status != 200 || ok.body != "{\"a\":true}\n") { qWarning() << ok.status << ok.error; return 2; }
+    if (!ok.ok() || ok.status != 200 || ok.body != "{\"a\":true}\n") {
+        qWarning() << ok.status << ok.error;
+        return 2;
+    }
     const HttpResponse missing = fetch(client, "missing");
     if (missing.ok() || missing.status != 404 || !missing.error.isEmpty()) return 3;
     const HttpResponse slow = fetch(client, "slow");

@@ -13,35 +13,44 @@ EpaperDisplayControl::EpaperDisplayControl(QObject *parent) : QObject(parent) {
     qRegisterMetaType<EPScreenMode>("EPScreenMode");
 }
 void EpaperDisplayControl::fail(const QString &message) {
-    m_status = message; qWarning().noquote() << message; emit changed();
+    m_status = message;
+    qWarning().noquote() << message;
+    emit changed();
 }
 void EpaperDisplayControl::initialize() {
     if (m_attempted) return;
     m_attempted = true;
     if (QGuiApplication::platformName() != "epaper") {
-        fail("Display controls: desktop preview"); return;
+        fail("Display controls: desktop preview");
+        return;
     }
     const QString path = "/usr/lib/plugins/scenegraph/libqsgepaper.so";
     QFile file(path);
     QCryptographicHash hash(QCryptographicHash::Sha256);
     if (!file.open(QIODevice::ReadOnly) || !hash.addData(&file)) {
-        fail("Display controls: could not identify epaper library"); return;
+        fail("Display controls: could not identify epaper library");
+        return;
     }
     if (hash.result().toHex() != "07aa9327f725288a5df5aebc33ea4b151c27d97d3b850279947ddddf3dd8ddec") {
-        fail("Display controls: unverified library version; unchanged"); return;
+        fail("Display controls: unverified library version; unchanged");
+        return;
     }
     m_library.setFileName(path);
     m_library.setLoadHints(QLibrary::PreventUnloadHint);
-    if (!m_library.load()) { fail("Display controls: library unavailable"); return; }
+    if (!m_library.load()) {
+        fail("Display controls: library unavailable");
+        return;
+    }
     // Inspect actual loaded Qt metadata before invoking any control methods.
-    auto *meta = reinterpret_cast<const QMetaObject *>(
-        m_library.resolve("_ZN16EPScreenModeItem16staticMetaObjectE"));
+    auto *meta = reinterpret_cast<const QMetaObject *>(m_library.resolve("_ZN16EPScreenModeItem16staticMetaObjectE"));
     if (!meta || meta->indexOfEnumerator("Mode") < 0) {
-        fail("Display controls: mode metadata unavailable"); return;
+        fail("Display controls: mode metadata unavailable");
+        return;
     }
     const auto mode = meta->enumerator(meta->indexOfEnumerator("Mode"));
     if (mode.keyToValue("Pen") != 0 || mode.keyToValue("Animation") != 2 || mode.keyToValue("UI") != 3) {
-        fail("Display controls: mode metadata differs; unchanged"); return;
+        fail("Display controls: mode metadata differs; unchanged");
+        return;
     }
     // Captured export is a static singleton accessor; EPFramebuffer derives QObject.
     // No object allocation, private field offsets or framebuffer memory are used.
@@ -61,7 +70,8 @@ bool EpaperDisplayControl::attachBackend(QObject *backend) {
 bool EpaperDisplayControl::popMode() {
     if (!m_pushed) return true;
     if (!m_backend || !QMetaObject::invokeMethod(m_backend, "popGlobalScreenMode", Qt::DirectConnection)) {
-        fail("Display controls: mode restore failed"); return false;
+        fail("Display controls: mode restore failed");
+        return false;
     }
     m_pushed = false;
     return true;
@@ -71,17 +81,24 @@ void EpaperDisplayControl::applyMode() {
     if (!m_enabled || (m_canvas && !m_canvasPenMode)) {
         if (!popMode()) return;
         const QString status = m_enabled && m_canvas ? "Display policy: default canvas" : "Display policy: default";
-        if (m_status != status) { m_status = status; emit changed(); }
+        if (m_status != status) {
+            m_status = status;
+            emit changed();
+        }
         return;
     }
-    const EPScreenMode desired = (m_canvas || m_ink) ? EPScreenMode::Pen : (m_motion || m_dragPage) ? EPScreenMode::Animation : EPScreenMode::UI;
+    const EPScreenMode desired = (m_canvas || m_ink)        ? EPScreenMode::Pen
+                                 : (m_motion || m_dragPage) ? EPScreenMode::Animation
+                                                            : EPScreenMode::UI;
     if (m_pushed && desired == m_mode) return;
     if (!popMode()) return;
     if (!QMetaObject::invokeMethod(m_backend, "pushGlobalScreenMode", Qt::DirectConnection,
-                                  Q_ARG(EPScreenMode, desired))) {
-        fail("Display controls: mode selection failed"); return;
+                                   Q_ARG(EPScreenMode, desired))) {
+        fail("Display controls: mode selection failed");
+        return;
     }
-    m_pushed = true; m_mode = desired;
+    m_pushed = true;
+    m_mode = desired;
     const QString mode = (m_canvas || m_ink) ? "Pen" : (m_motion || m_dragPage) ? "Animation" : "UI";
     m_status = "Display policy: " + mode;
     qInfo().noquote() << m_status;
@@ -144,5 +161,7 @@ void EpaperDisplayControl::cleanNow() {
     else qInfo() << "Display: requested hardware ghost cleanup";
 }
 void EpaperDisplayControl::shutdown() {
-    m_cleanup.stop(); popMode(); m_backend = nullptr;
+    m_cleanup.stop();
+    popMode();
+    m_backend = nullptr;
 }

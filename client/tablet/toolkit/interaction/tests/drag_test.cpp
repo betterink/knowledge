@@ -16,20 +16,25 @@ int main(int argc, char **argv) {
     engine.rootContext()->setContextProperty("testController", &controller);
     QQmlComponent component(&engine);
     component.setData("import QtQuick\nimport \"qrc:/toolkit\"\n"
-        "DragSurface { width: 400; height: 400; controller: testController }", QUrl());
+                      "DragSurface { width: 400; height: 400; controller: testController }",
+                      QUrl());
     std::unique_ptr<QObject> object(component.create());
-    if (!object) { qWarning() << component.errors(); return 1; }
+    if (!object) {
+        qWarning() << component.errors();
+        return 1;
+    }
     auto *surface = qobject_cast<QQuickItem *>(object.get());
-    QQuickWindow window; window.resize(400, 400);
+    QQuickWindow window;
+    window.resize(400, 400);
     surface->setParentItem(window.contentItem());
-    window.show(); app.processEvents();
+    window.show();
+    app.processEvents();
     auto *square = surface->findChild<QQuickItem *>("dragSquare");
     if (!square) return 2;
     const auto send = [&](QEvent::Type type, QPointF position) {
         const bool release = type == QEvent::MouseButtonRelease;
-        QMouseEvent event(type, position, position,
-            type == QEvent::MouseMove ? Qt::NoButton : Qt::LeftButton,
-            release ? Qt::NoButton : Qt::LeftButton, Qt::NoModifier);
+        QMouseEvent event(type, position, position, type == QEvent::MouseMove ? Qt::NoButton : Qt::LeftButton,
+                          release ? Qt::NoButton : Qt::LeftButton, Qt::NoModifier);
         QCoreApplication::sendEvent(&window, &event);
         app.processEvents();
     };
@@ -42,7 +47,8 @@ int main(int argc, char **argv) {
     send(QEvent::MouseMove, {54, 120});
     send(QEvent::MouseMove, {60, 120});
     if (square->x() < 38 || square->x() > 40) {
-        qWarning() << "Small drag was delayed or lost initial movement:" << square->x(); return 4;
+        qWarning() << "Small drag was delayed or lost initial movement:" << square->x();
+        return 4;
     }
     send(QEvent::MouseMove, {700, 700});
     send(QEvent::MouseButtonRelease, {700, 700});

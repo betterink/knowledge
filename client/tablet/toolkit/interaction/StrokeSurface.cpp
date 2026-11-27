@@ -9,8 +9,8 @@
 #include <QtCore/QDebug>
 
 static qint64 clockNs() {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(
-        std::chrono::steady_clock::now().time_since_epoch()).count();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
+        .count();
 }
 
 StrokeSurface::StrokeSurface(QQuickItem *parent) : QQuickPaintedItem(parent) {
@@ -38,9 +38,14 @@ void StrokeSurface::geometryChange(const QRectF &next, const QRectF &old) {
     QQuickPaintedItem::geometryChange(next, old);
     const QSize size(qMax(1, int(std::ceil(next.width()))), qMax(1, int(std::ceil(next.height()))));
     if (size == m_image.size()) return;
-    QImage resized(size, QImage::Format_RGB32); resized.fill(Qt::white);
-    if (!m_image.isNull()) { QPainter painter(&resized); painter.drawImage(0, 0, m_image); }
-    m_image = resized; update();
+    QImage resized(size, QImage::Format_RGB32);
+    resized.fill(Qt::white);
+    if (!m_image.isNull()) {
+        QPainter painter(&resized);
+        painter.drawImage(0, 0, m_image);
+    }
+    m_image = resized;
+    update();
 }
 void StrokeSurface::paint(QPainter *painter) {
     const qint64 pending = m_pendingSince.exchange(0);
@@ -60,31 +65,39 @@ void StrokeSurface::paint(QPainter *painter) {
 void StrokeSurface::reportTiming() {
     const int paints = m_paints.load();
     m_timingSummary = QString("%1 samples · %2 paints · raster %3 ms/sample · paint wait avg %4 / max %5 ms")
-        .arg(m_samples).arg(paints)
-        .arg(m_samples ? double(m_rasterNs) / m_samples / 1e6 : 0, 0, 'f', 3)
-        .arg(paints ? double(m_waitTotal.load()) / paints / 1e6 : 0, 0, 'f', 2)
-        .arg(double(m_waitMax.load()) / 1e6, 0, 'f', 2);
+                          .arg(m_samples)
+                          .arg(paints)
+                          .arg(m_samples ? double(m_rasterNs) / m_samples / 1e6 : 0, 0, 'f', 3)
+                          .arg(paints ? double(m_waitTotal.load()) / paints / 1e6 : 0, 0, 'f', 2)
+                          .arg(double(m_waitMax.load()) / 1e6, 0, 'f', 2);
     qInfo().noquote() << "Ink timing (event handler to paint, NOT physical display latency):" << m_timingSummary;
     emit timingSummaryChanged();
 }
 void StrokeSurface::clear() {
     if (!m_image.isNull()) m_image.fill(Qt::white);
-    m_strokeCount = 0; m_tabletActive = false;
+    m_strokeCount = 0;
+    m_tabletActive = false;
     finish();
-    update(); emit inputSummaryChanged();
+    update();
+    emit inputSummaryChanged();
 }
 void StrokeSurface::begin(const QPointF &point, float pressure) {
     if (m_image.isNull()) return;
     // Accumulate a writing burst, report only after a pause. Avoid UI churn
     // between closely spaced strokes, and avoid resetting render-thread counters.
     if (!m_report.isActive()) {
-        m_samples = 0; m_rasterNs = 0;
-        m_waitTotal.store(0); m_waitMax.store(0); m_paints.store(0);
+        m_samples = 0;
+        m_rasterNs = 0;
+        m_waitTotal.store(0);
+        m_waitMax.store(0);
+        m_paints.store(0);
     }
     m_report.stop();
-    m_active = true; ++m_strokeCount;
+    m_active = true;
+    ++m_strokeCount;
     emit drawingActiveChanged();
-    m_lastPoint = point; m_lastWidth = 2.0f + qBound(0.0f, pressure, 1.0f) * 5.0f;
+    m_lastPoint = point;
+    m_lastWidth = 2.0f + qBound(0.0f, pressure, 1.0f) * 5.0f;
     append(point, pressure);
 }
 void StrokeSurface::append(const QPointF &point, float pressure) {
@@ -99,9 +112,10 @@ void StrokeSurface::append(const QPointF &point, float pressure) {
         else painter.drawLine(m_lastPoint, bounded);
     }
     const qreal margin = qMax(penWidth, m_lastWidth) / 2 + 2;
-    const QRect dirty = QRectF(m_lastPoint, bounded).normalized()
-        .adjusted(-margin, -margin, margin, margin).toAlignedRect();
-    m_lastPoint = bounded; m_lastWidth = penWidth;
+    const QRect dirty =
+        QRectF(m_lastPoint, bounded).normalized().adjusted(-margin, -margin, margin, margin).toAlignedRect();
+    m_lastPoint = bounded;
+    m_lastWidth = penWidth;
     ++m_samples;
     m_rasterNs += clockNs() - started;
     qint64 empty = 0;
@@ -111,29 +125,42 @@ void StrokeSurface::append(const QPointF &point, float pressure) {
 void StrokeSurface::finish() {
     const bool wasActive = m_active;
     m_active = false;
-    if (wasActive) { emit drawingActiveChanged(); m_report.start(); }
+    if (wasActive) {
+        emit drawingActiveChanged();
+        m_report.start();
+    }
     emit inputSummaryChanged();
 }
 bool StrokeSurface::eventFilter(QObject *watched, QEvent *event) {
     if (watched != window() || !isVisible() || !isEnabled()) return false;
     const auto type = event->type();
-    if (type != QEvent::TabletPress && type != QEvent::TabletMove && type != QEvent::TabletRelease)
-        return false;
+    if (type != QEvent::TabletPress && type != QEvent::TabletMove && type != QEvent::TabletRelease) return false;
     auto *tablet = static_cast<QTabletEvent *>(event);
     const QPointF point = mapFromScene(tablet->position());
     if (type == QEvent::TabletPress) {
         if (!contains(point)) return false;
-        m_tabletActive = true; ++m_tabletEvents; begin(point, float(tablet->pressure()));
+        m_tabletActive = true;
+        ++m_tabletEvents;
+        begin(point, float(tablet->pressure()));
     } else {
         if (!m_tabletActive) return false;
-        ++m_tabletEvents; append(point, float(tablet->pressure()));
-        if (type == QEvent::TabletRelease) { m_tabletActive = false; finish(); }
+        ++m_tabletEvents;
+        append(point, float(tablet->pressure()));
+        if (type == QEvent::TabletRelease) {
+            m_tabletActive = false;
+            finish();
+        }
     }
-    tablet->accept(); return true;
+    tablet->accept();
+    return true;
 }
 void StrokeSurface::mousePressEvent(QMouseEvent *event) {
-    if (!m_fingerEnabled || m_tabletActive) { event->ignore(); return; }
-    begin(event->position(), 0.5f); event->accept();
+    if (!m_fingerEnabled || m_tabletActive) {
+        event->ignore();
+        return;
+    }
+    begin(event->position(), 0.5f);
+    event->accept();
 }
 void StrokeSurface::mouseMoveEvent(QMouseEvent *event) {
     if (m_fingerEnabled && !m_tabletActive && m_active) append(event->position(), 0.5f);

@@ -14,19 +14,26 @@ int main(int argc, char **argv) {
     QString error;
     {
         auto db = Database::open(path, migrations.mid(0, 1), &error);
-        if (!db) { qWarning() << error; return 1; }
+        if (!db) {
+            qWarning() << error;
+            return 1;
+        }
         if (!db->exec("INSERT INTO note(title, body) VALUES(?, ?)", {"first", QByteArray("\0\1", 2)})) return 2;
     }
     {
         // Reopening applies only the new migration and keeps existing rows.
         auto db = Database::open(path, migrations, &error);
-        if (!db) { qWarning() << error; return 3; }
+        if (!db) {
+            qWarning() << error;
+            return 3;
+        }
         if (!db->exec("UPDATE note SET score = ? WHERE title = ?", {1.5, "first"})) return 4;
         const auto rows = db->query("SELECT id, title, body, score, NULL FROM note");
         if (!rows || rows->size() != 1) return 5;
         const QVariantList row = rows->first();
         if (row != QVariantList{qint64(1), "first", QByteArray("\0\1", 2), 1.5, QVariant()}) {
-            qWarning() << row; return 6;
+            qWarning() << row;
+            return 6;
         }
         if (db->query("SELECT * FROM missing") || !db->lastError().contains("missing")) return 7;
         if (db->query("PRAGMA journal_mode")->first().first() != "wal") return 8;

@@ -6,8 +6,8 @@
 std::unique_ptr<Database> Database::open(const QString &path, const QStringList &migrations, QString *error) {
     QDir().mkpath(QFileInfo(path).absolutePath());
     sqlite3 *handle = nullptr;
-    const int rc = sqlite3_open_v2(path.toUtf8().constData(), &handle,
-                                   SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+    const int rc =
+        sqlite3_open_v2(path.toUtf8().constData(), &handle, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
     std::unique_ptr<Database> db(new Database(handle));
     if (rc != SQLITE_OK) db->fail();
     else if (db->query("PRAGMA journal_mode=WAL") && db->migrate(migrations)) return db;
@@ -44,11 +44,12 @@ bool Database::migrate(const QStringList &migrations) {
 static int bind(sqlite3_stmt *statement, int index, const QVariant &value) {
     if (value.isNull()) return sqlite3_bind_null(statement, index);
     switch (value.typeId()) {
-    case QMetaType::Bool: case QMetaType::Int: case QMetaType::LongLong:
-    case QMetaType::UInt: case QMetaType::ULongLong:
-        return sqlite3_bind_int64(statement, index, value.toLongLong());
-    case QMetaType::Double:
-        return sqlite3_bind_double(statement, index, value.toDouble());
+    case QMetaType::Bool:
+    case QMetaType::Int:
+    case QMetaType::LongLong:
+    case QMetaType::UInt:
+    case QMetaType::ULongLong: return sqlite3_bind_int64(statement, index, value.toLongLong());
+    case QMetaType::Double: return sqlite3_bind_double(statement, index, value.toDouble());
     case QMetaType::QByteArray: {
         const QByteArray bytes = value.toByteArray();
         return sqlite3_bind_blob64(statement, index, bytes.constData(), bytes.size(), SQLITE_TRANSIENT);
@@ -77,22 +78,28 @@ static QVariant column(sqlite3_stmt *statement, int index) {
 std::optional<QList<QVariantList>> Database::query(const QString &sql, const QVariantList &params) {
     sqlite3_stmt *statement = nullptr;
     if (sqlite3_prepare_v2(m_db, sql.toUtf8().constData(), -1, &statement, nullptr) != SQLITE_OK) {
-        fail(); return std::nullopt;
+        fail();
+        return std::nullopt;
     }
     std::unique_ptr<sqlite3_stmt, int (*)(sqlite3_stmt *)> owner(statement, sqlite3_finalize);
     for (int i = 0; i < params.size(); ++i)
-        if (bind(statement, i + 1, params[i]) != SQLITE_OK) { fail(); return std::nullopt; }
+        if (bind(statement, i + 1, params[i]) != SQLITE_OK) {
+            fail();
+            return std::nullopt;
+        }
     QList<QVariantList> rows;
     int rc;
     while ((rc = sqlite3_step(statement)) == SQLITE_ROW) {
         QVariantList row;
-        for (int i = 0; i < sqlite3_column_count(statement); ++i) row.append(column(statement, i));
+        for (int i = 0; i < sqlite3_column_count(statement); ++i)
+            row.append(column(statement, i));
         rows.append(row);
     }
-    if (rc != SQLITE_DONE) { fail(); return std::nullopt; }
+    if (rc != SQLITE_DONE) {
+        fail();
+        return std::nullopt;
+    }
     return rows;
 }
 
-bool Database::exec(const QString &sql, const QVariantList &params) {
-    return query(sql, params).has_value();
-}
+bool Database::exec(const QString &sql, const QVariantList &params) { return query(sql, params).has_value(); }

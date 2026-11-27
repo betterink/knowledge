@@ -13,7 +13,8 @@ int main(int argc, char **argv) {
     DisplayTestBackend backend;
     TestControl control;
     if (!control.attachBackend(&backend) || backend.stack != QVector<EPScreenMode>{EPScreenMode::UI}) return 1;
-    for (int i = 0; i < 10; ++i) control.setMotionActive(true);
+    for (int i = 0; i < 10; ++i)
+        control.setMotionActive(true);
     if (backend.stack != QVector<EPScreenMode>{EPScreenMode::Animation}) return 2;
     control.cleanNow();
     if (backend.cleanups) return 3; // Never clean during interaction.
@@ -53,7 +54,8 @@ int main(int argc, char **argv) {
     if (!backend.stack.isEmpty()) return 16;
     const int defaultPushes = backend.pushes, defaultPops = backend.pops;
     for (int i = 0; i < 20; ++i) {
-        control.setInkActive(true); control.setInkActive(false);
+        control.setInkActive(true);
+        control.setInkActive(false);
     }
     if (backend.pushes != defaultPushes || backend.pops != defaultPops) return 17;
     control.setCanvasPenMode(true);
@@ -85,6 +87,7 @@ int main(int argc, char **argv) {
     TestControl unsupported;
     QObject object;
     if (unsupported.attachBackend(&object)) return 9;
-    qInfo() << "PASS: Qt control invocation, balanced modes, idle cleanup, sustained/default canvas without per-stroke control calls, scroll-policy restoration and unsupported backend refusal";
+    qInfo() << "PASS: Qt control invocation, balanced modes, idle cleanup, sustained/default canvas without per-stroke "
+               "control calls, scroll-policy restoration and unsupported backend refusal";
     return 0;
 }
