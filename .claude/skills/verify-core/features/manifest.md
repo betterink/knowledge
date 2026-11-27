@@ -29,5 +29,5 @@ Preconditions: baseline.
 
 1. Use `keys_unsorted` to read the server's order. `keys` re-sorts in jq and hides an ordering bug.
 2. `modified` is the file mtime in epoch milliseconds and changes with every launch's seed. Assert `hash` and `size`.
-3. The index is built once at startup, so restart (`stop`, then `launch`) to see disk changes until the watcher lands. `/v1/files` reads from disk on every request.
+3. The index is built once at startup. `stop` deletes `instance/` and `launch` seeds a fresh vault, so a restart discards changes made under `instance/`. To index an extra file, add it to `seed()` in `verify.sh`. `/v1/files` reads from disk on every request.
 4. The server logs `Indexed vault: <files> files, <folders> folders in <ms> ms` once at startup. `stop` copies it to `evidence/server.log`.
