@@ -3,7 +3,7 @@ package ink.knowledge.service.vault
 import ink.knowledge.configuration.properties.VaultProperties
 import ink.knowledge.enums.vault.FileFormat
 import ink.knowledge.exceptions.NotFoundException
-import ink.knowledge.models.vault.VaultEntry
+import ink.knowledge.models.vault.VaultIndex
 import ink.knowledge.models.vault.Version
 import java.io.OutputStream
 import java.nio.file.FileVisitResult
@@ -23,11 +23,16 @@ class FileService(
 ) {
     private val root: Path = Path.of(properties.root).toAbsolutePath().normalize()
 
+    init {
+        require(Files.isDirectory(root)) { "vault.root (VAULT_ROOT) is not an existing directory: $root" }
+    }
+
     // ------ Public read operations ------
 
-    /** Every allowed folder and file, as vault-relative paths, sorted. */
-    fun walk(): List<VaultEntry> {
-        val entries = mutableListOf<VaultEntry>()
+    /** Every allowed folder and file version, vault-relative, sorted. */
+    fun index(): VaultIndex {
+        val folders = mutableListOf<String>()
+        val files = mutableMapOf<String, Version>()
         Files.walkFileTree(
             root,
             object : SimpleFileVisitor<Path>() {
@@ -37,7 +42,7 @@ class FileService(
                 ): FileVisitResult {
                     if (dir == root) return FileVisitResult.CONTINUE
                     if (dir.fileName.toString() in properties.excluded) return FileVisitResult.SKIP_SUBTREE
-                    entries += VaultEntry(relativize(dir), directory = true)
+                    folders += relativize(dir)
                     return FileVisitResult.CONTINUE
                 }
 
@@ -46,13 +51,14 @@ class FileService(
                     attrs: BasicFileAttributes,
                 ): FileVisitResult {
                     if (attrs.isRegularFile && isAllowed(file.fileName.toString())) {
-                        entries += VaultEntry(relativize(file), directory = false)
+                        val path = relativize(file)
+                        files[path] = version(path)
                     }
                     return FileVisitResult.CONTINUE
                 }
             },
         )
-        return entries.sortedBy { it.path }
+        return VaultIndex(folders.sorted(), files.toSortedMap())
     }
 
     fun read(path: String): ByteArray = Files.readAllBytes(existingFile(path))

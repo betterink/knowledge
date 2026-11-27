@@ -25,7 +25,7 @@ Not covered:
 1. Paths longer than 4 segments, or tokens outside the alphabet (unicode, `\`, NUL).
 2. Ktor URL decoding before `FileService`. The `verify-core` skill covers `%2E%2E` over HTTP.
 3. Races where the vault changes between the policy check and the read (TOCTOU).
-4. `version()` and `walk()`. `version()` shares `existingFile` with `read()`.
+4. `version()` and `index()`. `version()` shares `existingFile` with `read()`.
 
 ## Coverage record
 

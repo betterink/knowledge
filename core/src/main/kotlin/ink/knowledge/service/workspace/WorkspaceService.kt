@@ -1,16 +1,17 @@
 package ink.knowledge.service.workspace
 
 import ink.knowledge.enums.vault.FileFormat
-import ink.knowledge.models.vault.VaultEntry
+import ink.knowledge.models.vault.VaultIndex
+import ink.knowledge.models.vault.Version
+import ink.knowledge.models.workspace.PageReference
+import ink.knowledge.models.workspace.Workspace
+import ink.knowledge.models.workspace.link.Link
 import ink.knowledge.models.workspace.node.Attachment
 import ink.knowledge.models.workspace.node.Base
 import ink.knowledge.models.workspace.node.Diagram
 import ink.knowledge.models.workspace.node.Folder
-import ink.knowledge.models.workspace.link.Link
 import ink.knowledge.models.workspace.node.Node
 import ink.knowledge.models.workspace.node.Page
-import ink.knowledge.models.workspace.PageReference
-import ink.knowledge.models.workspace.Workspace
 import ink.knowledge.service.vault.FileService
 import ink.knowledge.util.FenceUtils
 import ink.knowledge.util.LinkUtils
@@ -21,26 +22,24 @@ class WorkspaceService(
 ) {
     // ------ Public read operations ------
 
-    /** Scans the vault and returns the full tree. */
-    fun load(): Workspace {
-        val entries = fileService.walk()
-        val filePaths = entries.filterNot { it.directory }.map { it.path }
-        val resolver = LinkResolverService(filePaths)
-        val files = filePaths.map { buildFileNode(it, resolver) }
+    /** Builds the full tree from the vault index. */
+    fun load(index: VaultIndex): Workspace {
+        val resolver = LinkResolverService(index.files.keys)
+        val files = index.files.map { (path, version) -> buildFileNode(path, version, resolver) }
         val name = fileService.rootName()
-        return Workspace(name = name, root = buildFolder(path = "", name = name, parent = null, entries, files))
+        return Workspace(name = name, root = buildFolder(path = "", name = name, parent = null, index.folders, files))
     }
 
     // ------ Private helpers ------
 
     private fun buildFileNode(
         path: String,
+        version: Version,
         resolver: LinkResolverService,
     ): Node {
         val fileName = path.substringAfterLast('/')
         val name = FileFormat.stripSuffix(fileName)
         val parent = parentOf(path)
-        val version = fileService.version(path)
         return when (val format = FileFormat.of(fileName)) {
             FileFormat.MARKDOWN -> {
                 val text = readText(path)
@@ -65,13 +64,13 @@ class WorkspaceService(
         path: String,
         name: String,
         parent: String?,
-        entries: List<VaultEntry>,
+        folders: List<String>,
         files: List<Node>,
     ): Folder {
         val subfolders =
-            entries
-                .filter { it.directory && parentOf(it.path) == path }
-                .map { buildFolder(it.path, it.path.substringAfterLast('/'), path, entries, files) }
+            folders
+                .filter { parentOf(it) == path }
+                .map { buildFolder(it, it.substringAfterLast('/'), path, folders, files) }
         val ownFiles = files.filter { it.parent == path }
         val folderNote =
             ownFiles
