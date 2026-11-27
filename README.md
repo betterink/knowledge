@@ -10,6 +10,7 @@ Obsidian-backed knowledge base for the reMarkable Paper Pro.
 | `client/tablet/toolkit/network/` | HTTP(S) client over Qt Network (`rm::network`) |
 | `client/tablet/toolkit/storage/` | SQLite database with versioned migrations, statically linked (`rm::storage`) |
 | `client/tablet/toolkit/examples/interaction-benchmark/` | Scroll, drag and pen test app for comparing display modes |
+| `client/tablet/api/` | C++ API models generated from core's serializers (`rm::api`). Regenerate with `cd core && ./gradlew generateClientModels` |
 | `client/tablet/deploy/` | SDK container, SDK candidate and on-device launcher |
 | `core/` | Kotlin + Ktor backend (Gradle) |
 | `docs/adr/` | Architecture decision records |

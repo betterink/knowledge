@@ -1,0 +1,260 @@
+{
+  "name": "vault-20261127-160605-98622",
+  "root": {
+    "path": "",
+    "name": "vault-20261127-160605-98622",
+    "parent": null,
+    "children": [
+      {
+        "kind": "folder",
+        "path": "A",
+        "name": "A",
+        "parent": "",
+        "children": [
+          {
+            "kind": "page",
+            "path": "A/Other.md",
+            "name": "Other",
+            "parent": "A",
+            "version": {
+              "hash": "78f50ef46072ccaf1757de66ca2ae35972b7afc7dafa322a07b388783621cafa",
+              "size": 8,
+              "modified": 1795755965030
+            },
+            "title": "Other",
+            "links": [
+              {
+                "source": "A/Other.md",
+                "target": "A/Same.md",
+                "raw": "Same",
+                "subpath": null,
+                "alias": null,
+                "kind": "LINK",
+                "start": 0,
+                "end": 8
+              }
+            ],
+            "format": "MARKDOWN"
+          },
+          {
+            "kind": "page",
+            "path": "A/Same.md",
+            "name": "Same",
+            "parent": "A",
+            "version": {
+              "hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "size": 1,
+              "modified": 1795755965028
+            },
+            "title": "Same",
+            "links": [],
+            "format": "MARKDOWN"
+          }
+        ],
+        "folderNote": null,
+        "format": "FOLDER"
+      },
+      {
+        "kind": "folder",
+        "path": "B",
+        "name": "B",
+        "parent": "",
+        "children": [
+          {
+            "kind": "page",
+            "path": "B/Same.md",
+            "name": "Same",
+            "parent": "B",
+            "version": {
+              "hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "size": 1,
+              "modified": 1795755965033
+            },
+            "title": "Same",
+            "links": [],
+            "format": "MARKDOWN"
+          }
+        ],
+        "folderNote": null,
+        "format": "FOLDER"
+      },
+      {
+        "kind": "folder",
+        "path": "Empty",
+        "name": "Empty",
+        "parent": "",
+        "children": [],
+        "folderNote": null,
+        "format": "FOLDER"
+      },
+      {
+        "kind": "folder",
+        "path": "Projects",
+        "name": "Projects",
+        "parent": "",
+        "children": [
+          {
+            "kind": "diagram",
+            "path": "Projects/Diagram.excalidraw.md",
+            "name": "Diagram",
+            "parent": "Projects",
+            "version": {
+              "hash": "f48716deca91b879429ec04c640ea0cebd9af490ae1596631f56ad9b111bf8f4",
+              "size": 26,
+              "modified": 1795755965020
+            },
+            "links": [
+              {
+                "source": "Projects/Diagram.excalidraw.md",
+                "target": "Home.md",
+                "raw": "Home",
+                "subpath": null,
+                "alias": null,
+                "kind": "LINK",
+                "start": 17,
+                "end": 25
+              }
+            ],
+            "format": "EXCALIDRAW"
+          },
+          {
+            "kind": "attachment",
+            "path": "Projects/image.png",
+            "name": "image",
+            "parent": "Projects",
+            "format": "IMAGE_PNG",
+            "version": {
+              "hash": "8f8cbb7dcf46e0bc7d53265749a6c17d116093a6ba95e442764060c76fd4a86c",
+              "size": 3,
+              "modified": 1795755965023
+            }
+          },
+          {
+            "kind": "page",
+            "path": "Projects/Projects.md",
+            "name": "Projects",
+            "parent": "Projects",
+            "version": {
+              "hash": "f8e9b3e7b4bd6ac3be84396bff236c19df64452baf1b8e96631be430d938b039",
+              "size": 100,
+              "modified": 1795755965017
+            },
+            "title": "Projects",
+            "links": [
+              {
+                "source": "Projects/Projects.md",
+                "target": "Home.md",
+                "raw": "Home|Start",
+                "subpath": null,
+                "alias": "Start",
+                "kind": "LINK",
+                "start": 0,
+                "end": 14
+              },
+              {
+                "source": "Projects/Projects.md",
+                "target": "Projects/Diagram.excalidraw.md",
+                "raw": "Diagram.excalidraw",
+                "subpath": null,
+                "alias": null,
+                "kind": "EMBED",
+                "start": 15,
+                "end": 38
+              },
+              {
+                "source": "Projects/Projects.md",
+                "target": "Projects/image.png",
+                "raw": "image.png|300",
+                "subpath": null,
+                "alias": "300",
+                "kind": "EMBED",
+                "start": 39,
+                "end": 57
+              },
+              {
+                "source": "Projects/Projects.md",
+                "target": "Home.md",
+                "raw": "Home\\|Escaped",
+                "subpath": null,
+                "alias": "Escaped",
+                "kind": "LINK",
+                "start": 80,
+                "end": 97
+              }
+            ],
+            "format": "MARKDOWN"
+          }
+        ],
+        "folderNote": {
+          "path": "Projects/Projects.md",
+          "name": "Projects",
+          "version": {
+            "hash": "f8e9b3e7b4bd6ac3be84396bff236c19df64452baf1b8e96631be430d938b039",
+            "size": 100,
+            "modified": 1795755965017
+          }
+        },
+        "format": "FOLDER"
+      },
+      {
+        "kind": "page",
+        "path": "Home.md",
+        "name": "Home",
+        "parent": "",
+        "version": {
+          "hash": "07af2ad0689bb957520c2a91cfaebb0abc6d97048fe0e716684ebfa60be8d785",
+          "size": 87,
+          "modified": 1795755965014
+        },
+        "title": "Home Page",
+        "links": [
+          {
+            "source": "Home.md",
+            "target": "Notes.base",
+            "raw": "Notes.base#Table",
+            "subpath": "Table",
+            "alias": null,
+            "kind": "LINK",
+            "start": 43,
+            "end": 63
+          },
+          {
+            "source": "Home.md",
+            "target": null,
+            "raw": "Missing",
+            "subpath": null,
+            "alias": null,
+            "kind": "LINK",
+            "start": 64,
+            "end": 75
+          },
+          {
+            "source": "Home.md",
+            "target": "Home.md",
+            "raw": "#Local",
+            "subpath": "Local",
+            "alias": null,
+            "kind": "LINK",
+            "start": 76,
+            "end": 86
+          }
+        ],
+        "format": "MARKDOWN"
+      },
+      {
+        "kind": "base",
+        "path": "Notes.base",
+        "name": "Notes",
+        "parent": "",
+        "version": {
+          "hash": "96f38c29a06a779a354059c40c74130771b33df5743d2e3c18f9ce1851a17f26",
+          "size": 10,
+          "modified": 1795755965025
+        },
+        "format": "BASE"
+      }
+    ],
+    "folderNote": null,
+    "format": "FOLDER"
+  }
+}

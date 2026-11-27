@@ -1,0 +1,50 @@
+{
+  "folders": [
+    "A",
+    "B",
+    "Empty",
+    "Projects"
+  ],
+  "files": {
+    "A/Other.md": {
+      "hash": "78f50ef46072ccaf1757de66ca2ae35972b7afc7dafa322a07b388783621cafa",
+      "size": 8,
+      "modified": 1795755965030
+    },
+    "A/Same.md": {
+      "hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "size": 1,
+      "modified": 1795755965028
+    },
+    "B/Same.md": {
+      "hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+      "size": 1,
+      "modified": 1795755965033
+    },
+    "Home.md": {
+      "hash": "07af2ad0689bb957520c2a91cfaebb0abc6d97048fe0e716684ebfa60be8d785",
+      "size": 87,
+      "modified": 1795755965014
+    },
+    "Notes.base": {
+      "hash": "96f38c29a06a779a354059c40c74130771b33df5743d2e3c18f9ce1851a17f26",
+      "size": 10,
+      "modified": 1795755965025
+    },
+    "Projects/Diagram.excalidraw.md": {
+      "hash": "f48716deca91b879429ec04c640ea0cebd9af490ae1596631f56ad9b111bf8f4",
+      "size": 26,
+      "modified": 1795755965020
+    },
+    "Projects/Projects.md": {
+      "hash": "f8e9b3e7b4bd6ac3be84396bff236c19df64452baf1b8e96631be430d938b039",
+      "size": 100,
+      "modified": 1795755965017
+    },
+    "Projects/image.png": {
+      "hash": "8f8cbb7dcf46e0bc7d53265749a6c17d116093a6ba95e442764060c76fd4a86c",
+      "size": 3,
+      "modified": 1795755965023
+    }
+  }
+}
