@@ -2,6 +2,7 @@ services:
   backend:
     build: ./core
     restart: unless-stopped
+    user: "${CONTAINER_USER:-app}"
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${PORT:-8080}:8080"
     volumes:
