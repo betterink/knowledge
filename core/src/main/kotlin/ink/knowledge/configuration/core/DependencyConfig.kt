@@ -1,4 +1,4 @@
-package ink.knowledge.configuration
+package ink.knowledge.configuration.core
 
 import ink.knowledge.configuration.properties.VaultProperties
 import ink.knowledge.models.vault.VaultIndex
@@ -22,10 +22,13 @@ fun Application.configureDependencies() {
         provide(::WorkspaceService)
         provide<VaultIndex> {
             val started = TimeSource.Monotonic.markNow()
-            val index = resolve<FileService>().index()
-            log.info(
-                "Indexed vault: ${index.files.size} files, ${index.folders.size} folders in ${started.elapsedNow().inWholeMilliseconds} ms",
-            )
+            val index = resolve<FileService>().let {
+                it.index()
+            }.also {
+                log.info(
+                    "Indexed vault: ${it.files.size} files, ${it.folders.size} folders in ${started.elapsedNow().inWholeMilliseconds} ms",
+                )
+            }
             index
         }
         provide<Workspace> { resolve<WorkspaceService>().load(resolve()) }

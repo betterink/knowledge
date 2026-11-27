@@ -1,4 +1,4 @@
-package ink.knowledge.configuration
+package ink.knowledge.configuration.core
 
 import ink.knowledge.controller.workspace.workspaceController
 import ink.knowledge.models.vault.VaultIndex
@@ -6,7 +6,6 @@ import ink.knowledge.models.workspace.Workspace
 import ink.knowledge.service.vault.FileService
 import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
-import io.ktor.server.plugins.di.resolve
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing

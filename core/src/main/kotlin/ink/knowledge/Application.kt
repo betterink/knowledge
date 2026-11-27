@@ -1,8 +1,8 @@
 package ink.knowledge
 
-import ink.knowledge.configuration.configureDependencies
-import ink.knowledge.configuration.configureRouting
-import ink.knowledge.configuration.configureSerialization
+import ink.knowledge.configuration.core.configureDependencies
+import ink.knowledge.configuration.core.configureRouting
+import ink.knowledge.configuration.core.configureSerialization
 import ink.knowledge.exceptions.configureExceptionHandling
 import io.ktor.server.application.Application
 import io.ktor.server.netty.EngineMain

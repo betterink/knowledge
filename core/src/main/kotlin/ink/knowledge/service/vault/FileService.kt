@@ -21,7 +21,7 @@ import java.security.MessageDigest
 class FileService(
     private val properties: VaultProperties,
 ) {
-    private val root: Path = vaultRoot(Path.of(properties.root).toAbsolutePath().normalize())
+    private val root: Path = validateVaultRoot(Path.of(properties.root).toAbsolutePath().normalize())
 
     // ------ Public read operations ------
 
@@ -72,10 +72,8 @@ class FileService(
 
     fun rootName(): String = root.fileName?.toString().orEmpty()
 
-    // ------ Private helpers ------
-
-    /** Fails fast unless [path] is an Obsidian vault; resolves symlinks. */
-    private fun vaultRoot(path: Path): Path {
+    // Validates a vault based on expected characteristics (ie. .obsidian file)
+    private fun validateVaultRoot(path: Path): Path {
         require(Files.isDirectory(path)) { "vault.root (VAULT_ROOT) is not an existing directory: $path" }
         require(
             Files.isDirectory(path.resolve(".obsidian")),
