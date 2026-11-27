@@ -4,7 +4,9 @@ Obsidian-backed knowledge base for the reMarkable Paper Pro.
 
 | Directory | Contents |
 | --- | --- |
-| `client/tablet/app/` | Qt Quick tablet application |
+| `client/tablet/app/` | Qt Quick tablet application (QML module `RmKnowledge`); `main.cpp` wires dependencies |
+| `client/tablet/app/ui/` | `Main.qml` window shell, `Theme` tokens, app-wide overlays; `components/` shared controls |
+| `client/tablet/app/<feature>/` | One domain: `screens/` QML views, `stores/` C++ state exposed to QML |
 | `client/tablet/toolkit/` | Reusable tablet modules; `rm::toolkit` links all of them |
 | `client/tablet/toolkit/interaction/` | Ink, pen navigation, display control and QML components (`rm::interaction`) |
 | `client/tablet/toolkit/network/` | HTTP(S) client over Qt Network (`rm::network`) |
