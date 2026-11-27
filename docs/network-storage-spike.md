@@ -20,8 +20,8 @@ Both requirements are met on device firmware 3.29.0.153 (verified 2026-11-25).
 3. Qt Sql is not used. `libQt6Sql` ships, but neither the SDK nor the device
    includes the `QSQLITE` driver plugin (`plugins/sqldrivers` is absent).
 
-Probe source: `tablet/probes/network-storage/` (standalone CMake project, not
-part of `tablet/CMakeLists.txt`).
+Probe source: removed after `rm::network` and `rm::store` replaced it; see
+commit d1723ef.
 
 ## Evidence
 
