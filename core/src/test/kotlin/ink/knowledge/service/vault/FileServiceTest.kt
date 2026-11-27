@@ -49,6 +49,20 @@ class FileServiceTest {
     }
 
     @Test
+    fun rootMustBeObsidianVault() {
+        val plain = Files.createTempDirectory("plain")
+        Files.writeString(plain.resolve("Note.md"), "x")
+        assertFailsWith<IllegalArgumentException> { FileService(VaultFactory.properties(plain)) }
+    }
+
+    @Test
+    fun symlinkedRootIndexesTheVault() {
+        val vault = VaultFactory.create()
+        val link = Files.createSymbolicLink(Files.createTempDirectory("link").resolve("vault"), vault)
+        assertEquals(FileService(VaultFactory.properties(vault)).index(), FileService(VaultFactory.properties(link)).index())
+    }
+
+    @Test
     fun rejectsPathsOutsidePolicy() {
         assertFailsWith<IllegalArgumentException> { service.read("../etc/passwd") }
         assertFailsWith<IllegalArgumentException> { service.read("A/../../x.md") }
