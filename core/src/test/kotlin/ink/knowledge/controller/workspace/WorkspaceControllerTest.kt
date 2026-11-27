@@ -40,6 +40,17 @@ class WorkspaceControllerTest {
         }
 
     @Test
+    fun manifestReturnsIndex() =
+        withVault {
+            val response = client.get("/v1/manifest")
+            assertEquals(HttpStatusCode.OK, response.status)
+            val index = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+            val same = index["files"]!!.jsonObject["A/Same.md"]!!.jsonObject
+            assertEquals("ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb", same["hash"]!!.jsonPrimitive.content)
+            assertTrue("Empty" in index["folders"]!!.jsonArray.map { it.jsonPrimitive.content })
+        }
+
+    @Test
     fun fileReturnsContentWithHashEtag() =
         withVault {
             val response = client.get("/v1/files/A/Same.md")

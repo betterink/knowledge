@@ -27,5 +27,5 @@ Preconditions: baseline.
 ## Gotchas
 
 1. `jq '..'` also visits link objects, whose `kind` is `LINK` or `EMBED`. Filter on the node kinds listed above.
-2. The tree is rebuilt from disk on every request. There is no cache to invalidate.
+2. The tree is built once at startup. `stop` deletes `instance/` and `launch` seeds a fresh vault, so a restart discards changes made under `instance/`. To add a file to the tree, add it to `seed()` in `verify.sh`.
 3. Symlinked files are skipped by the walk but still reachable through `/v1/files`, where they are rejected. See [file-read.md](./file-read.md).

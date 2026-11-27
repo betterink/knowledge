@@ -5,7 +5,6 @@ import ink.knowledge.models.vault.Version
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 @SerialName("attachment")
 data class Attachment(

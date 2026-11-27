@@ -44,3 +44,4 @@ Each feature file starts with an H1 title and one paragraph describing the behav
 2. [Workspace tree](./workspace-tree.md) covers node kinds, exclusions, titles, folder notes and ordering.
 3. [Link resolution](./links.md) covers wikilinks, embeds, aliases, subpaths, fences and ambiguity.
 4. [File read](./file-read.md) covers bytes, ETag, content types and the path policy.
+5. [Manifest](./manifest.md) covers the startup index: file versions, folders, exclusions, tree agreement and the snapshot.
