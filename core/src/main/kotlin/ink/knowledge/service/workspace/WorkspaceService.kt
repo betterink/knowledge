@@ -12,6 +12,7 @@ import ink.knowledge.models.workspace.node.Page
 import ink.knowledge.models.workspace.PageReference
 import ink.knowledge.models.workspace.Workspace
 import ink.knowledge.service.vault.FileService
+import ink.knowledge.util.LinkUtils
 
 /** Builds the workspace tree and resolved links from the vault files. */
 class WorkspaceService(
@@ -84,7 +85,7 @@ class WorkspaceService(
         text: String,
         resolver: LinkResolverService,
     ): List<Link> =
-        WikiLinkParser.parse(path, text).map { parsed ->
+        LinkUtils.parse(path, text).map { parsed ->
             parsed.link.copy(target = resolver.resolve(path, parsed.linkpath))
         }
 
