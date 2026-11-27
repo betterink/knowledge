@@ -113,6 +113,7 @@ def main():
     preview = commands.add_parser('preview', help='Build and run the macOS preview')
     preview.add_argument('--smoke-test', action='store_true')
     commands.add_parser('test', help='Build and run native tests on macOS')
+    commands.add_parser('format', help='Format C++ sources with clang-format')
     build = commands.add_parser('build', help='Build for the tablet in the SDK container')
     build.add_argument('--sdk-url', help='Override the recorded SDK candidate')
     package_parser = commands.add_parser('package', help='Package an SDK-built AArch64 executable')
@@ -139,6 +140,8 @@ def main():
     elif args.command == 'test':
         mac_build()
         run('ctest', '--test-dir', MAC_BUILD, '--output-on-failure')
+    elif args.command == 'format':
+        run('cmake', '-DMODE=fix', '-P', TABLET / 'cmake/ClangFormat.cmake')
     elif args.command == 'build':
         build_tablet(args.sdk_url)
     elif args.command == 'package':

@@ -8,6 +8,7 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Network Qml Quick QuickControl
 option(RM_KNOWLEDGE_BUILD_TESTS "Build native tests" ON)
 if(RM_KNOWLEDGE_BUILD_TESTS)
     enable_testing()
+    add_test(NAME format COMMAND ${CMAKE_COMMAND} -DMODE=check -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ClangFormat.cmake)
 endif()
 set(RM_TOOLKIT_BUILD_TESTS ${RM_KNOWLEDGE_BUILD_TESTS})
 add_subdirectory(toolkit)
