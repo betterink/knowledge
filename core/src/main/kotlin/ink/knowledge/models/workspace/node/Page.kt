@@ -18,6 +18,3 @@ data class Page(
 ) : Node {
     override val format = FileFormat.MARKDOWN
 }
-
-
-
