@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/client/tablet"
+    "cmake.sourceDirectory": "${workspaceFolder}/client/tablet",
+    "cmake.buildDirectory": "${workspaceFolder}/build/tablet-vscode",
+    "cmake.generator": "Unix Makefiles"
 }
