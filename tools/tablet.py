@@ -119,6 +119,7 @@ def main():
         command.add_argument('--host', default='rm')
         if name == 'run':
             command.add_argument('--pen-input', choices=['none', 'evdevtablet'], default='none')
+            command.add_argument('--server', default='', help='Backend base URL')
     args = parser.parse_args()
     if args.command == 'preview':
         binary = mac_build()
@@ -140,7 +141,7 @@ def main():
         if args.command == 'deploy':
             deploy(args.host)
         elif args.command == 'run':
-            run('ssh', *SSH_OPTIONS, args.host,
+            run('ssh', *SSH_OPTIONS, args.host, f'RM_KNOWLEDGE_SERVER={shlex.quote(args.server)} '
                 f'/home/root/{NAME}/current/run-on-tablet.sh ' + shlex.quote(args.pen_input))
         elif args.command == 'stop':
             run('ssh', *SSH_OPTIONS, args.host, f'systemctl stop {NAME}.service')

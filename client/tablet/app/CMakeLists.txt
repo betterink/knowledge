@@ -1,4 +1,4 @@
-add_executable(rm-knowledge main.cpp application.qrc)
+add_executable(rm-knowledge main.cpp WorkspaceStore.cpp WorkspaceStore.h application.qrc)
 target_link_libraries(rm-knowledge PRIVATE rm::toolkit)
 add_test(NAME app-smoke COMMAND rm-knowledge --smoke-test)
 set_tests_properties(app-smoke PROPERTIES

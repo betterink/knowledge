@@ -32,8 +32,11 @@ fi
 systemctl_path=$(command -v systemctl)
 systemctl reset-failed rm-knowledge.service 2>/dev/null || true
 set --
+if test -n "${RM_KNOWLEDGE_SERVER:-}"; then
+    set -- --setenv=RM_KNOWLEDGE_SERVER="$RM_KNOWLEDGE_SERVER"
+fi
 if test "$pen_input" = evdevtablet; then
-    set -- --setenv=QT_QPA_GENERIC_PLUGINS=evdevtablet --setenv=QT_LOGGING_RULES=qt.qpa.input=true
+    set -- "$@" --setenv=QT_QPA_GENERIC_PLUGINS=evdevtablet --setenv=QT_LOGGING_RULES=qt.qpa.input=true
 fi
 systemd-run --collect --unit=rm-knowledge \
     --property=Type=exec \
@@ -47,6 +50,7 @@ systemd-run --collect --unit=rm-knowledge \
     --setenv=QT_QPA_PLATFORM=epaper \
     --setenv=QML_DISABLE_DISK_CACHE=1 \
     --setenv=LD_PRELOAD= \
+    --setenv=HOME=/home/root \
     "$@" \
     "$app" --fullscreen -platform epaper
 echo 'rm-knowledge started. Exit on-screen, or: systemctl stop rm-knowledge.service'

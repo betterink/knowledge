@@ -5,8 +5,11 @@
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <QtCore/QSysInfo>
+#include <QtCore/QStandardPaths>
 #include "Toolkit.h"
 #include "EpaperDisplayControl.h"
+#include "WorkspaceStore.h"
+#include <memory>
 
 int main(int argc, char **argv) {
     for (int i = 1; i < argc; ++i) {
@@ -20,9 +23,20 @@ int main(int argc, char **argv) {
     QGuiApplication app(argc, argv);
     app.setApplicationName("rm-knowledge");
     const bool fullscreen = app.arguments().contains("--fullscreen");
+    const bool smokeTest = app.arguments().contains("--smoke-test");
+    QStandardPaths::setTestModeEnabled(smokeTest);
+    const QString databasePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/rm-knowledge.db";
+    QString error;
+    const auto database = Database::open(databasePath, WorkspaceStore::migrations, &error);
+    if (!database) { qCritical().noquote() << "Database" << databasePath << "failed:" << error; return 1; }
+    qInfo().noquote() << "Database:" << databasePath;
+    const QString server = qEnvironmentVariable("RM_KNOWLEDGE_SERVER");
+    const auto http = server.isEmpty() ? nullptr : std::make_unique<HttpClient>(QUrl(server));
+    WorkspaceStore workspaceStore(*database, http.get());
     Ink::registerTypes();
     EpaperDisplayControl displayControl;
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("workspaceStore", &workspaceStore);
     engine.rootContext()->setContextProperty("appFullscreen", fullscreen);
     engine.rootContext()->setContextProperty("displayControl", &displayControl);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] {
@@ -41,7 +55,7 @@ int main(int argc, char **argv) {
             window->showFullScreen();
         }
     }
-    if (app.arguments().contains("--smoke-test")) QTimer::singleShot(500, &app, &QCoreApplication::quit);
+    if (smokeTest) QTimer::singleShot(500, &app, &QCoreApplication::quit);
     const int result = app.exec();
     displayControl.shutdown();
     return result;

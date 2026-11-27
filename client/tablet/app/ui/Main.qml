@@ -7,9 +7,10 @@ Window {
     visible: true
     color: "white"
     title: "rm-knowledge"
-    Text {
+    Column {
         anchors.centerIn: parent
-        text: "rm-knowledge"
-        font.pixelSize: 48
+        spacing: 16
+        Text { text: workspaceStore.workspace.name ?? "rm-knowledge"; font.pixelSize: 48 }
+        Text { text: workspaceStore.status; font.pixelSize: 20 }
     }
 }
