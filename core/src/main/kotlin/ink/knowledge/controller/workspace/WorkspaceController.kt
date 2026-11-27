@@ -1,8 +1,9 @@
 package ink.knowledge.controller.workspace
 
 import ink.knowledge.enums.vault.FileFormat
+import ink.knowledge.models.vault.VaultIndex
+import ink.knowledge.models.workspace.Workspace
 import ink.knowledge.service.vault.FileService
-import ink.knowledge.service.workspace.WorkspaceService
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.server.response.header
@@ -13,12 +14,17 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
 fun Route.workspaceController(
-    workspaceService: WorkspaceService,
+    index: VaultIndex,
+    workspace: Workspace,
     fileService: FileService,
 ) {
     route("/v1") {
         get("/workspace") {
-            call.respond(workspaceService.load())
+            call.respond(workspace)
+        }
+
+        get("/manifest") {
+            call.respond(index)
         }
 
         get("/files/{path...}") {

@@ -1,6 +1,6 @@
 ---
 name: verify-core
-description: Launch and drive the rm-knowledge core Ktor HTTP service (core/) against a disposable seeded Obsidian vault, and capture HTTP evidence. Use to prove behavior of /health, /v1/workspace (tree, titles, folder notes, links) or /v1/files (bytes, ETag, path policy) after a change in core/.
+description: Launch and drive the rm-knowledge core Ktor HTTP service (core/) against a disposable seeded Obsidian vault, and capture HTTP evidence. Use to prove behavior of /health, /v1/workspace (tree, titles, folder notes, links), /v1/manifest (startup index, file hashes) or /v1/files (bytes, ETag, path policy) after a change in core/.
 ---
 
 # Verify core
@@ -41,7 +41,8 @@ Sends `GET http://127.0.0.1:<port><path>` with `curl --path-as-is` and prints `<
 
 1. `GET /health` returns `ok`.
 2. `GET /v1/workspace` returns the vault tree as JSON. Nodes carry a `kind` discriminator: `folder`, `page`, `diagram`, `base`, `attachment`.
-3. `GET /v1/files/{path...}` returns raw bytes with `ETag: "<sha256>"` and a `Content-Type` from `FileFormat`.
+3. `GET /v1/manifest` returns the startup vault index as JSON: `folders` (sorted paths) and `files` (path to `{hash, size, modified}`).
+4. `GET /v1/files/{path...}` returns raw bytes with `ETag: "<sha256>"` and a `Content-Type` from `FileFormat`.
 
 Assert with `jq` on the saved body, for example:
 

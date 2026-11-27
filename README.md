@@ -47,3 +47,15 @@ cd core
 ./gradlew run     # http://localhost:8080/health
 ./gradlew ktlintFormat
 ```
+
+## Self-hosting
+
+The backend runs in Docker Compose and serves a vault folder that the host already syncs. The vault is mounted read-only.
+
+1. `cp .env.example .env`
+2. Set `VAULT_PATH` in `.env` to the vault folder. If the vault is not world-readable, also set `CONTAINER_USER` to its owner's `UID:GID`.
+3. `docker compose up -d --build`
+4. `curl localhost:8080/health` prints `ok` (use your `PORT` if changed).
+5. For tablet access, set `BIND_ADDRESS=0.0.0.0` (or a Tailscale IP) and run `docker compose up -d`. There is no auth yet, so anyone who can reach the port can read the vault.
+
+The index is built at startup, so run `docker compose restart backend` to pick up vault changes until the watcher lands.

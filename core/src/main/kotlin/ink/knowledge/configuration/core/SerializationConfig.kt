@@ -1,4 +1,4 @@
-package ink.knowledge.configuration
+package ink.knowledge.configuration.core
 
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
