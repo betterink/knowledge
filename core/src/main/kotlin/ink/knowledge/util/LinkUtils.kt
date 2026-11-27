@@ -7,14 +7,13 @@ import ink.knowledge.models.workspace.link.ParsedLink
 /** `[[wikilink]]` & `![[embeds]]` extraction & helpers */
 object LinkUtils {
     private val wikiLink = Regex("""(!?)\[\[([^\[\]\n]+?)]]""")
-    private val fence = Regex("""^(```|~~~).*?^\1""", setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
 
     /** Links with `target` unresolved; `raw` holds the text inside the brackets. */
     fun parse(
         source: String,
         text: String,
     ): List<ParsedLink> {
-        val fenced = fence.findAll(text).map { it.range }.toList()
+        val fenced = FenceUtils.ranges(text)
         return wikiLink
             .findAll(text)
             .filter { match -> fenced.none { match.range.first in it } }

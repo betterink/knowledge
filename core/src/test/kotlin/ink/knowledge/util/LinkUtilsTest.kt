@@ -38,4 +38,22 @@ class LinkUtilsTest {
         val text = "[[A]]\n```\n[[B]]\n```\n~~~\n[[C]]\n~~~\n[[D]]"
         assertEquals(listOf("A", "D"), LinkUtils.parse("a.md", text).map { it.linkpath })
     }
+
+    @Test
+    fun tildeDoesNotCloseBacktickFence() {
+        val text = "```\n~~~\n[[B]]\n```\n[[D]]"
+        assertEquals(listOf("D"), LinkUtils.parse("a.md", text).map { it.linkpath })
+    }
+
+    @Test
+    fun shorterFenceDoesNotCloseLongerFence() {
+        val text = "````\n```\n[[B]]\n````\n[[D]]"
+        assertEquals(listOf("D"), LinkUtils.parse("a.md", text).map { it.linkpath })
+    }
+
+    @Test
+    fun unclosedFenceRunsToEnd() {
+        val text = "[[A]]\n```\n[[B]]"
+        assertEquals(listOf("A"), LinkUtils.parse("a.md", text).map { it.linkpath })
+    }
 }

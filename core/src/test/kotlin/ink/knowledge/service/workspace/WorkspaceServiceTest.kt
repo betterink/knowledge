@@ -8,6 +8,7 @@ import ink.knowledge.models.workspace.node.Node
 import ink.knowledge.models.workspace.node.Page
 import ink.knowledge.service.vault.FileService
 import ink.knowledge.util.factory.VaultFactory
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -40,6 +41,14 @@ class WorkspaceServiceTest {
     fun titleIsFirstHeadingOutsideFrontmatter() {
         assertEquals("Home Page", (node("Home.md") as Page).title)
         assertEquals("Same", (node("A/Same.md") as Page).title)
+    }
+
+    @Test
+    fun titleSkipsHeadingInsideMismatchedFence() {
+        val root = VaultFactory.create()
+        Files.writeString(root.resolve("Fenced.md"), "```\n~~~\n# Hidden\n```\n# Actual\n")
+        val loaded = WorkspaceService(FileService(VaultFactory.properties(root))).load()
+        assertEquals("Actual", (flatten(loaded.root).single { it.path == "Fenced.md" } as Page).title)
     }
 
     @Test

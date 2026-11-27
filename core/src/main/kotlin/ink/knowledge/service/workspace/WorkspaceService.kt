@@ -12,6 +12,7 @@ import ink.knowledge.models.workspace.node.Page
 import ink.knowledge.models.workspace.PageReference
 import ink.knowledge.models.workspace.Workspace
 import ink.knowledge.service.vault.FileService
+import ink.knowledge.util.FenceUtils
 import ink.knowledge.util.LinkUtils
 
 /** Builds the workspace tree and resolved links from the vault files. */
@@ -93,12 +94,14 @@ class WorkspaceService(
 
     /** First H1 outside frontmatter and fenced code. */
     private fun titleOf(text: String): String? {
-        val lines = text.lines()
+        val lines = text.split('\n')
         val bodyStart = if (lines.firstOrNull() == "---") lines.drop(1).indexOf("---") + 2 else 0
-        var inFence = false
-        for (line in lines.drop(bodyStart)) {
-            if (line.startsWith("```") || line.startsWith("~~~")) inFence = !inFence
-            if (!inFence && line.startsWith("# ")) return line.removePrefix("# ").trim()
+        val fenced = FenceUtils.ranges(text)
+        var offset = 0
+        for ((index, line) in lines.withIndex()) {
+            val inFence = fenced.any { offset in it }
+            if (index >= bodyStart && !inFence && line.startsWith("# ")) return line.removePrefix("# ").trim()
+            offset += line.length + 1
         }
         return null
     }
