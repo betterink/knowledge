@@ -20,7 +20,7 @@ Obsidian-backed knowledge base for the reMarkable Paper Pro.
 
 ## Requirements
 
-1. macOS with Homebrew `qt` and `cmake`.
+1. macOS with Homebrew `qt`, `cmake` and clang-format 23.x on `PATH`.
 2. Docker Desktop (tablet build).
 3. JDK 21 (backend).
 4. SSH alias `rm` for the tablet.
