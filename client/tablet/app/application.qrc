@@ -1,3 +1,0 @@
-<RCC><qresource prefix="/app">
-  <file alias="Main.qml">ui/Main.qml</file>
-</qresource></RCC>

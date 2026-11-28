@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 3.21)
-project(network_storage_probe LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Network)
-find_library(SQLITE3_STATIC libsqlite3.a REQUIRED)
-add_executable(network-storage-probe main.cpp)
-target_link_libraries(network-storage-probe PRIVATE Qt6::Core Qt6::Network ${SQLITE3_STATIC} dl pthread m)

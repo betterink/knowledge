@@ -1,7 +1,15 @@
-add_library(rm-toolkit STATIC
-    core/StrokeSurface.cpp core/StrokeSurface.h core/Toolkit.h
-    core/TabletNavigation.cpp core/TabletNavigation.h
-    core/EpaperDisplayControl.cpp core/EpaperDisplayControl.h)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Network Qml Quick)
+option(RM_TOOLKIT_BUILD_TESTS "Build toolkit tests" ON)
+option(RM_TOOLKIT_BUILD_EXAMPLES "Build toolkit examples" ON)
+foreach(module interaction network storage)
+    add_subdirectory(${module})
+    if(RM_TOOLKIT_BUILD_TESTS)
+        add_subdirectory(${module}/tests)
+    endif()
+endforeach()
+add_library(rm-toolkit INTERFACE)
 add_library(rm::toolkit ALIAS rm-toolkit)
-target_include_directories(rm-toolkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core)
-target_link_libraries(rm-toolkit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick)
+target_link_libraries(rm-toolkit INTERFACE rm::interaction rm::network rm::storage)
+if(RM_TOOLKIT_BUILD_EXAMPLES)
+    add_subdirectory(examples/interaction-benchmark)
+endif()

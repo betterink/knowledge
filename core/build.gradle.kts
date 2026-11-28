@@ -25,3 +25,15 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation(kotlin("test"))
 }
+
+val clientModels = layout.projectDirectory.dir("../client/tablet/api")
+
+tasks.register<JavaExec>("generateClientModels") {
+    group = "build"
+    description = "Regenerates the tablet's C++ API models from the response serializers."
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass.set("ink.knowledge.codegen.CppModelGeneratorKt")
+    args(clientModels.asFile.path)
+}
+
+tasks.test { systemProperty("clientModels", clientModels.asFile.path) }
