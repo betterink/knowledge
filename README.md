@@ -4,11 +4,10 @@ Obsidian-backed knowledge base for the reMarkable Paper Pro.
 
 | Directory | Contents |
 | --- | --- |
-| `tablet/app/` | Qt Quick tablet application |
-| `tablet/toolkit/` | Ink, pen navigation and display control, copied from rm-toolkit (`rm::toolkit`) |
-| `tablet/deploy/` | SDK container, SDK candidate and on-device launcher |
-| `backend/` | Kotlin + Ktor backend (Gradle) |
-| `docs/adr/` | Architecture decision records |
+| `client/tablet/app/` | Qt Quick tablet application |
+| `client/tablet/toolkit/` | Ink, pen navigation and display control, copied from rm-toolkit (`rm::toolkit`) |
+| `client/tablet/deploy/` | SDK container, SDK candidate and on-device launcher |
+| `core/` | Kotlin + Ktor backend (Gradle) |
 | `tools/` | Host-side build, test and deploy scripts |
 
 ## Requirements
@@ -29,12 +28,12 @@ python3 tools/tablet.py run --pen-input evdevtablet
 python3 tools/tablet.py stop
 ```
 
-`run` stops Xochitl for a 10-minute session and restores it on exit. See `tablet/toolkit/DISPLAY.md` for display-bridge limitations.
+`run` stops Xochitl for a 10-minute session and restores it on exit. See `client/tablet/toolkit/DISPLAY.md` for display-bridge limitations.
 
 ## Backend
 
 ```sh
-cd backend
+cd core
 ./gradlew build   # compile, test, ktlint
 ./gradlew run     # http://localhost:8080/health
 ./gradlew ktlintFormat
