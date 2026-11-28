@@ -45,6 +45,18 @@ int main(int argc, char **argv) {
         if (!db || db->query("PRAGMA user_version")->first().first() != 2) return 10;
     }
     if (Database::open(path, migrations.mid(0, 1), &error) || !error.contains("newer")) return 11;
+    {
+        // A trailing line comment must not swallow the version bump.
+        const QString commented = directory.filePath("commented.db");
+        const QStringList withComment{"CREATE TABLE item(id) -- create items"};
+        auto db = Database::open(commented, withComment, &error);
+        if (!db || db->query("PRAGMA user_version")->first().first() != 1) return 12;
+        db.reset();
+        if (!Database::open(commented, withComment, &error)) {
+            qWarning() << error;
+            return 13;
+        }
+    }
     qInfo() << "PASS: persistence across reopen, incremental migrations, rollback, typed values, errors";
     return 0;
 }

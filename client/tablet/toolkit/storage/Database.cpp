@@ -31,7 +31,7 @@ bool Database::migrate(const QStringList &migrations) {
         return false;
     }
     for (int i = applied; i < migrations.size(); ++i) {
-        const QString script = "BEGIN;" + migrations[i] + QString(";PRAGMA user_version=%1;COMMIT;").arg(i + 1);
+        const QString script = "BEGIN;\n" + migrations[i] + QString("\n;PRAGMA user_version=%1;COMMIT;").arg(i + 1);
         if (sqlite3_exec(m_db, script.toUtf8().constData(), nullptr, nullptr, nullptr) != SQLITE_OK) {
             fail();
             sqlite3_exec(m_db, "ROLLBACK", nullptr, nullptr, nullptr);
