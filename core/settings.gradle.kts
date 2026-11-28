@@ -1,1 +1,1 @@
-rootProject.name = "rm-knowledge-backend"
+rootProject.name = "knowledge-backend"

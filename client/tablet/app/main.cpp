@@ -11,14 +11,14 @@
 int main(int argc, char **argv) {
     for (int i = 1; i < argc; ++i) {
         if (QByteArray(argv[i]) == "--probe") {
-            qInfo() << "rm-knowledge; compiled Qt" << QT_VERSION_STR
+            qInfo() << "knowledge; compiled Qt" << QT_VERSION_STR
                     << "runtime Qt" << qVersion() << "architecture" << QSysInfo::currentCpuArchitecture();
             return 0;
         }
     }
     QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTabletEvents, true);
     QGuiApplication app(argc, argv);
-    app.setApplicationName("rm-knowledge");
+    app.setApplicationName("knowledge");
     const bool fullscreen = app.arguments().contains("--fullscreen");
     Ink::registerTypes();
     EpaperDisplayControl displayControl;

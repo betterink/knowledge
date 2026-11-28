@@ -3,7 +3,7 @@
 set -euo pipefail
 
 CORE="$(cd "$(dirname "$0")/../../../core" && pwd)"
-BIN="$CORE/build/install/rm-knowledge-backend/bin/rm-knowledge-backend"
+BIN="$CORE/build/install/knowledge-backend/bin/knowledge-backend"
 BASE="${TMPDIR:-/tmp}/verify-core"
 
 die() { echo "error: $*" >&2; exit 1; }

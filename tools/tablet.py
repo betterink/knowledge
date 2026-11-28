@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build, test, package and deploy the rm-knowledge tablet app."""
+"""Build, test, package and deploy the knowledge tablet app."""
 import argparse
 import json
 import os
@@ -17,7 +17,7 @@ from common import ROOT, SSH_OPTIONS, check_host, check_elf, elf_dependencies, r
 TABLET = ROOT / 'tablet'
 DEPLOY = TABLET / 'deploy'
 DIST = ROOT / 'dist'
-NAME = 'rm-knowledge'
+NAME = 'knowledge'
 MAC_BUILD = ROOT / 'build/tablet-mac'
 
 
@@ -49,8 +49,8 @@ def build_tablet(url=None):
               f"tablet target: {configuration['targetFirmware']}.", flush=True)
     target = 'linux/arm64' if architecture == 'aarch64' else 'linux/amd64'
     run(executable, 'build', '--progress=plain', '--platform', target, '--build-arg', f'SDK_URL={url}',
-        '--build-arg', f'SDK_HOST_ARCH={architecture}', '-t', 'rm-knowledge-sdk:local', DEPLOY)
-    run(executable, 'run', '--rm', '--platform', target, '-v', f'{ROOT}:/workspace', 'rm-knowledge-sdk:local')
+        '--build-arg', f'SDK_HOST_ARCH={architecture}', '-t', 'knowledge-sdk:local', DEPLOY)
+    run(executable, 'run', '--rm', '--platform', target, '-v', f'{ROOT}:/workspace', 'knowledge-sdk:local')
 
 
 def package(binary):

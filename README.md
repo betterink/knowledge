@@ -1,4 +1,4 @@
-# rm-knowledge
+# knowledge
 
 Obsidian-backed knowledge base for the reMarkable Paper Pro.
 
@@ -23,8 +23,8 @@ Obsidian-backed knowledge base for the reMarkable Paper Pro.
 ```sh
 python3 tools/tablet.py test                  # Mac build and native tests
 python3 tools/tablet.py preview               # Mac preview window
-python3 tools/tablet.py build                 # SDK container build -> dist/rm-knowledge.tar.gz
-python3 tools/tablet.py deploy                # install to /home/root/rm-knowledge
+python3 tools/tablet.py build                 # SDK container build -> dist/knowledge.tar.gz
+python3 tools/tablet.py deploy                # install to /home/root/knowledge
 python3 tools/tablet.py run --pen-input evdevtablet
 python3 tools/tablet.py stop
 ```

@@ -41,7 +41,7 @@ case "${OECORE_TARGET_ARCH:-${TARGET_PREFIX:-}}" in
     *) echo 'Use the Paper Pro (ferrari) AArch64 target SDK.' >&2; exit 1 ;;
 esac
 cmake -S "$repo_dir/tablet" -B "$repo_dir/build/tablet-device" \
-    -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$toolchain_file" -DRM_KNOWLEDGE_BUILD_TESTS=OFF
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$toolchain_file" -DKNOWLEDGE_BUILD_TESTS=OFF
 cmake --build "$repo_dir/build/tablet-device" --parallel 2
 python3 "$repo_dir/tools/tablet.py" package \
-    --binary "$repo_dir/build/tablet-device/app/rm-knowledge"
+    --binary "$repo_dir/build/tablet-device/app/knowledge"
