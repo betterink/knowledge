@@ -1,6 +1,6 @@
 ---
 name: verify-core
-description: Launch and drive the rm-knowledge core Ktor HTTP service (core/) against a disposable seeded Obsidian vault, and capture HTTP evidence. Use to prove behavior of /health, /v1/workspace (tree, titles, folder notes, links), /v1/manifest (startup index, file hashes) or /v1/files (bytes, ETag, path policy) after a change in core/.
+description: Launch and drive the knowledge core Ktor HTTP service (core/) against a disposable seeded Obsidian vault, and capture HTTP evidence. Use to prove behavior of /health, /v1/workspace (tree, titles, folder notes, links), /v1/manifest (startup index, file hashes) or /v1/files (bytes, ETag, path policy) after a change in core/.
 ---
 
 # Verify core

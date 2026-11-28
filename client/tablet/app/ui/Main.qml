@@ -6,10 +6,10 @@ Window {
     height: appFullscreen ? Screen.height : 1200
     visible: true
     color: "white"
-    title: "rm-knowledge"
+    title: "knowledge"
     Text {
         anchors.centerIn: parent
-        text: "rm-knowledge"
+        text: "knowledge"
         font.pixelSize: 48
     }
 }
