@@ -4,7 +4,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <functional>
 
-// error is set only when no HTTP response arrived (DNS, TLS, timeout, offline).
+// error is set when the transfer failed (DNS, TLS, timeout, offline, truncated).
 struct HttpResponse {
     int status = 0;
     QByteArray body;

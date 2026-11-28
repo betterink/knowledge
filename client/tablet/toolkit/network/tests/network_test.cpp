@@ -7,16 +7,18 @@
 #include <QtNetwork/QTcpSocket>
 #include <memory>
 
-// Answers /api/ok with JSON, others with 404; never answers /api/slow.
+// Answers /api/ok with JSON, /api/truncated with a short body, others with 404; never answers /api/slow.
 static void serve(QTcpServer &server) {
     QObject::connect(&server, &QTcpServer::newConnection, &server, [&server] {
         QTcpSocket *socket = server.nextPendingConnection();
         QObject::connect(socket, &QTcpSocket::readyRead, socket, [socket] {
             const QByteArray request = socket->readAll();
             if (request.startsWith("GET /api/slow")) return;
-            const bool ok = request.startsWith("GET /api/ok ");
-            socket->write(ok ? "HTTP/1.1 200 OK\r\nContent-Length: 11\r\nConnection: close\r\n\r\n{\"a\":true}\n"
-                             : "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+            if (request.startsWith("GET /api/truncated "))
+                socket->write("HTTP/1.1 200 OK\r\nContent-Length: 100\r\nConnection: close\r\n\r\n{\"a\":");
+            else if (request.startsWith("GET /api/ok "))
+                socket->write("HTTP/1.1 200 OK\r\nContent-Length: 11\r\nConnection: close\r\n\r\n{\"a\":true}\n");
+            else socket->write("HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
             socket->disconnectFromHost();
         });
     });
@@ -50,6 +52,11 @@ int main(int argc, char **argv) {
     if (missing.ok() || missing.status != 404 || !missing.error.isEmpty()) return 3;
     const HttpResponse slow = fetch(client, "slow");
     if (slow.ok() || slow.status != 0 || slow.error.isEmpty()) return 4;
+    const HttpResponse truncated = fetch(client, "truncated");
+    if (truncated.ok() || truncated.status != 200 || truncated.error.isEmpty()) {
+        qWarning() << truncated.status << truncated.error << truncated.body;
+        return 7;
+    }
 
     QTcpServer closed;
     closed.listen(QHostAddress::LocalHost);
@@ -68,6 +75,6 @@ int main(int argc, char **argv) {
     QTimer::singleShot(500, &wait, &QEventLoop::quit);
     wait.exec();
     if (called) return 6;
-    qInfo() << "PASS: 2xx body, HTTP error status, timeout, refused connection, cancelled context";
+    qInfo() << "PASS: 2xx body, HTTP error status, timeout, truncated body, refused connection, cancelled context";
     return 0;
 }

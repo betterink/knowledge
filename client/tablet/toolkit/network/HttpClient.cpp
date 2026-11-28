@@ -12,8 +12,11 @@ void HttpClient::get(const QString &path, QObject *context, std::function<void(c
         reply->deleteLater();
         HttpResponse response;
         response.status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        // Codes below ContentAccessDenied are transport failures, not HTTP statuses.
+        const bool transportFailed =
+            reply->error() != QNetworkReply::NoError && reply->error() < QNetworkReply::ContentAccessDenied;
         if (response.status) response.body = reply->readAll();
-        else response.error = reply->errorString();
+        if (!response.status || transportFailed) response.error = reply->errorString();
         done(response);
     });
 }
