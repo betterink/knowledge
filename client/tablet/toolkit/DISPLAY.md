@@ -37,8 +37,7 @@ waveform file. A changed library or different thread/interface disables the brid
 - Idle/interface mode: **UI**.
 - List movement: **Animation** until movement ends.
 - Drag page: prepare **Animation** while visible to avoid a mode transition on
-  the initial press; real contact still suppresses cleanup until release. See
-  [drag optimisation](../../docs/drag-optimisation.md).
+  the initial press; real contact still suppresses cleanup until release.
 - Canvas page: hold **Pen** mode for the whole session by default. The canvas
   comparison button releases this override to compare the default backend policy.
   Neither choice changes modes per stroke or automatically cleans between strokes.
@@ -71,38 +70,12 @@ examples. We deliberately do not call it or assume an older library layout.
 Even these verified method names do not prove that the proposed policy removes
 trails, avoids blank scrolling, or meets the required latency.
 
-## Device test
-
-Stop any running benchmark, then rebuild and deploy:
-
-```sh
-python3 tools/standalone.py setup
-python3 tools/standalone.py run --pen-input evdevtablet
-```
-
-Check that the display-policy control changes between UI and Animation outside
-the canvas and reads Pen throughout drawing sessions (or default canvas for the comparison). After releasing a drag or finishing a flick,
-wait for the idle cleanup. Compare managed/default policies and the Clean display
-button. Record whether the old square position is erased, content remains visible
-during scrolling and cleanup removes existing trails. Preserve the smooth pen
-behaviour as an acceptance requirement; stop using the new policy if it regresses.
-
-If the status says controls are unavailable or unverified, collect diagnostics:
-
-```sh
-python3 tools/standalone.py diagnose --display-library
-```
-
-Automatic device orientation remains separate work. The benchmark still uses the
-manual Rotate button; no accelerometer library or native rotation integration is
-claimed to be present.
-
 ## Handwriting benchmark and remaining work
 
 The canvas records samples handled, stroke raster CPU time, paint count and the
 mean/max wait from the first pending append to entry into paint(). Counters use a
 steady clock; render-thread counters are atomic. A 300 ms writing pause produces
-one summary on screen and in `standalone.py logs`; no per-point logging or timer
+one summary on screen and in `tablet.py logs`; no per-point logging or timer
 redraws occur during drawing. Closely spaced strokes accumulate into one burst.
 These numbers do **not** measure kernel-to-Qt delivery, paint completion, driver
 submission or physical panel latency. Paint count is not the panel refresh rate.
@@ -115,7 +88,7 @@ and pen. Record a high-frame-rate camera view containing both pen tip and ink;
 software timing cannot establish tip-to-visible-ink latency. Collect the journal:
 
 ```sh
-python3 tools/standalone.py logs
+python3 tools/tablet.py logs
 ```
 
 If paint waits are high, investigate scene scheduling and a dedicated active-ink
